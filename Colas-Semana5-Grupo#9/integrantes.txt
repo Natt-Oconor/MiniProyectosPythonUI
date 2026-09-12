@@ -1,0 +1,20 @@
+======================================================================
+UNIVERSIDAD NACIONAL AUTÓNOMA DE NICARAGUA, MANAGUA (UNAN-MANAGUA)
+ÁREA DE CONOCIMIENTO: CIENCIAS BÁSICAS Y TECNOLOGÍA
+CARRERA: INGENIERÍA EN SISTEMAS DE INFORMACIÓN
+ASIGNATURA: PROGRAMACIÓN CON ESTRUCTURAS DE DATOS
+ACTIVIDAD: Tarea-Semana5-Colas 
+======================================================================
+
+NÚMERO DE GRUPO: Grupo #9
+
+INTEGRANTES DEL EQUIPO:
+1. Nombre Completo: Natalie Jaraseth Oconor Ampie
+   Carnet:          19043220
+
+2. Nombre Completo: Carlos Snayder Cruz Montegro
+   Carnet:          25416009
+
+
+FECHA DE ENTREGA: 11 Septiembre 2026
+======================================================================
