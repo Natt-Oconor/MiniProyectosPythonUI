@@ -1,0 +1,25 @@
+Para ejecutar esto tienes que ubicarte en la ruta de la carpeta desde la terminar
+
+por ejemplo los archivos estan en esta ruta: D:\AntigrativyTarea\Tarea1\solucion
+
+en la termina digitas: cd D:\AntigrativyTarea\Tarea1\solucion
+
+luego ejecuta lo de abajo ↓:
+ejemplo =>
+python practica_clase.py
+
+
+
+# 1. Ejecutar Práctica en Clase
+python practica_clase.py
+# 2. Ejecutar Tarea y visualizar análisis Big-O
+python tarea.py
+# 3. Ejecutar Mini-Proyecto Explorador de Directorios
+python explorador_directorios.py
+
+
+
+Ejecutar Suite de Pruebas Unitarias
+
+Para correr las 14 pruebas automatizadas con reporte de éxito:
+python -m unittest test_soluciones.py -v
