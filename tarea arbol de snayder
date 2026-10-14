@@ -1,0 +1,179 @@
+from collections import deque
+
+class NodoArbol:
+    def __init__(self, valor):
+        self.valor = valor
+        self.izquierdo = None
+        self.derecho = None
+
+class ArbolBinarioBusqueda:
+    def __init__(self):
+        self.raiz = None
+        
+    def insertar(self, valor):
+        if self.raiz is None:
+            self.raiz = NodoArbol(valor)
+        else:
+            self._insertar_recursivo(self.raiz, valor)
+            
+    def _insertar_recursivo(self, nodo_actual, valor):
+        if valor < nodo_actual.valor:
+            if nodo_actual.izquierdo is None:
+                nodo_actual.izquierdo = NodoArbol(valor)
+            else:
+                self._insertar_recursivo(nodo_actual.izquierdo, valor)
+        elif valor > nodo_actual.valor:
+            if nodo_actual.derecho is None:
+                nodo_actual.derecho = NodoArbol(valor)
+            else:
+                self._insertar_recursivo(nodo_actual.derecho, valor)
+        else:
+            pass
+            
+    def buscar(self, valor):
+        return self._buscar_recursivo(self.raiz, valor)
+        
+    def _buscar_recursivo(self, nodo_actual, valor):
+        if nodo_actual is None:
+            return False
+        if nodo_actual.valor == valor:
+            return True
+        elif valor < nodo_actual.valor:
+            return self._buscar_recursivo(nodo_actual.izquierdo, valor)
+        else:
+            return self._buscar_recursivo(nodo_actual.derecho, valor)
+
+    def inorden(self):
+        resultado = []
+        self._inorden_rec(self.raiz, resultado)
+        return resultado
+        
+    def _inorden_rec(self, nodo, resultado):
+        if nodo is not None:
+            self._inorden_rec(nodo.izquierdo, resultado)
+            resultado.append(nodo.valor)
+            self._inorden_rec(nodo.derecho, resultado)
+
+    def mostrar_arbol(self):
+        self._imprimir_nodo(self.raiz, "", True)
+
+    def _imprimir_nodo(self, nodo, prefijo, es_izquierdo):
+        if nodo is not None:
+            self._imprimir_nodo(nodo.derecho, prefijo + ("|   " if es_izquierdo else "    "), False)
+            print(prefijo + ("\\-- " if es_izquierdo else "/-- ") + str(nodo.valor))
+            self._imprimir_nodo(nodo.izquierdo, prefijo + ("    " if es_izquierdo else "|   "), True)
+
+    # ==========================================
+    # MÉTODOS DE LA TAREA (Ejercicios 1 al 5)
+    # ==========================================
+
+    # 1. Eliminar
+    def eliminar(self, valor):
+        self.raiz = self._eliminar_recursivo(self.raiz, valor)
+
+    def _eliminar_recursivo(self, nodo, valor):
+        if nodo is None:
+            return None
+        if valor < nodo.valor:
+            nodo.izquierdo = self._eliminar_recursivo(nodo.izquierdo, valor)
+        elif valor > nodo.valor:
+            nodo.derecho = self._eliminar_recursivo(nodo.derecho, valor)
+        else:
+            if nodo.izquierdo is None:
+                return nodo.derecho
+            elif nodo.derecho is None:
+                return nodo.izquierdo
+            
+            sucesor = self._encontrar_minimo(nodo.derecho)
+            nodo.valor = sucesor.valor
+            nodo.derecho = self._eliminar_recursivo(nodo.derecho, sucesor.valor)
+        return nodo
+
+    def _encontrar_minimo(self, nodo):
+        actual = nodo
+        while actual.izquierdo is not None:
+            actual = actual.izquierdo
+        return actual
+
+    # 2. Recorrido por niveles (BFS)
+    def recorrido_por_niveles(self):
+        if self.raiz is None:
+            return []
+        resultado = []
+        cola = deque([self.raiz])
+        while cola:
+            nodo_actual = cola.popleft()
+            resultado.append(nodo_actual.valor)
+            if nodo_actual.izquierdo is not None:
+                cola.append(nodo_actual.izquierdo)
+            if nodo_actual.derecho is not None:
+                cola.append(nodo_actual.derecho)
+        return resultado
+
+    # 3. Sumar elementos
+    def sumar_elementos(self):
+        return self._sumar_recursivo(self.raiz)
+
+    def _sumar_recursivo(self, nodo):
+        if nodo is None:
+            return 0
+        return nodo.valor + self._sumar_recursivo(nodo.izquierdo) + self._sumar_recursivo(nodo.derecho)
+
+    # 4. Es completo
+    def es_completo(self):
+        return self._es_completo_rec(self.raiz)
+
+    def _es_completo_rec(self, nodo):
+        if nodo is None:
+            return True
+        if nodo.izquierdo is None and nodo.derecho is None:
+            return True
+        if nodo.izquierdo is not None and nodo.derecho is not None:
+            return self._es_completo_rec(nodo.izquierdo) and self._es_completo_rec(nodo.derecho)
+        return False
+
+    # 5. Balancear árbol
+    def balancear_arbol(self):
+        elementos = self.inorden()
+        
+        def construir_balanceado(lista):
+            if not lista:
+                return None
+            medio = len(lista) // 2
+            nodo = NodoArbol(lista[medio])
+            nodo.izquierdo = construir_balanceado(lista[:medio])
+            nodo.derecho = construir_balanceado(lista[medio+1:])
+            return nodo
+
+        nuevo_arbol = ArbolBinarioBusqueda()
+        nuevo_arbol.raiz = construir_balanceado(elementos)
+        return nuevo_arbol
+
+
+# ==========================================
+# CÓDIGO DE PRUEBA (Para verificar la tarea)
+# ==========================================
+if __name__ == "__main__":
+    bst = ArbolBinarioBusqueda()
+    
+    # Insertamos algunos valores de prueba
+    valores = [50, 30, 70, 20, 40, 60, 80]
+    for v in valores:
+        bst.insertar(v)
+        
+    print("--- Árbol Original ---")
+    bst.mostrar_arbol()
+    
+    # Probando Ej. 2: Recorrido por niveles (BFS)
+    print("\nRecorrido por niveles (BFS):", bst.recorrido_por_niveles())
+    
+    # Probando Ej. 3: Sumar elementos
+    print("Suma de todos los elementos:", bst.sumar_elementos())
+    
+    # Probando Ej. 4: ¿Es completo?
+    print("¿El árbol es completo?:", bst.es_completo())
+    
+    # Probando Ej. 1: Eliminar un nodo
+    print("\nEliminando el 30...")
+    bst.eliminar(30)
+    print("Inorden después de eliminar:", bst.inorden())
