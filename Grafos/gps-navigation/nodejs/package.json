@@ -1,0 +1,19 @@
+{
+  "name": "sistema-navegacion-gps",
+  "version": "1.0.0",
+  "description": "Mini-Proyecto de Sistema de Navegación GPS con Grafo Ponderado y Dijkstra",
+  "type": "module",
+  "main": "index.mjs",
+  "scripts": {
+    "start": "node index.mjs",
+    "test": "node --test test_navigation.mjs"
+  },
+  "keywords": [
+    "gps",
+    "dijkstra",
+    "grafo-ponderado",
+    "shortest-path"
+  ],
+  "author": "",
+  "license": "MIT"
+}
