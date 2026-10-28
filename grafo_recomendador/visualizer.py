@@ -2,6 +2,7 @@
 Módulo de Visualización Gráfica para el Grafo Bipartito de Recomendaciones.
 Utiliza NetworkX para el modelado y Matplotlib para renderizar
 estéticamente los nodos bipartitos, aristas ponderadas y caminos de recomendación.
+Compatible con exportación de archivos PNG y embedding en interfaces gráficas (Tkinter/CustomTkinter).
 """
 
 from typing import List, Optional
@@ -12,30 +13,33 @@ import networkx as nx
 from graph import GrafoBipartitoRecomendador
 
 
-def dibujar_grafo_recomendador(
+def crear_figura_grafo(
     grafo: GrafoBipartitoRecomendador,
     usuario_objetivo: Optional[str] = None,
     recomendaciones: Optional[List[dict]] = None,
-    ruta_salida: str = "grafo_recomendaciones.png",
-    mostrar_interactivo: bool = False
-) -> str:
+    figsize=(11, 7),
+    dpi=100,
+    modo_oscuro: bool = False
+) -> plt.Figure:
     """
-    Dibuja el grafo bipartito organizado en dos columnas:
-    - Izquierda (x=0): Nodos de Usuarios (con etiquetas a la izquierda)
-    - Derecha (x=1.6): Nodos de Películas (con etiquetas a la derecha)
-    
-    Resalta al usuario objetivo, películas recomendadas y caminos explicativos.
+    Crea y retorna un objeto matplotlib.figure.Figure con el grafo bipartito renderizado.
+    Soporta modo claro y oscuro, ideal para embeber en CustomTkinter.
     """
     G = grafo.exportar_networkx()
 
-    fig, ax = plt.subplots(figsize=(15, 9), dpi=200)
-    fig.patch.set_facecolor("#FAFAFA")
-    ax.set_facecolor("#FAFAFA")
+    bg_color = "#1E1E2E" if modo_oscuro else "#FAFAFA"
+    text_color = "#CDD6F4" if modo_oscuro else "#2C3E50"
+    box_bg = "#313244" if modo_oscuro else "#FFFFFF"
+    box_edge = "#45475A" if modo_oscuro else "#D5D8DC"
 
-    titulo = "Sistema de Recomendación - Grafo Bipartito"
+    fig, ax = plt.subplots(figsize=figsize, dpi=dpi)
+    fig.patch.set_facecolor(bg_color)
+    ax.set_facecolor(bg_color)
+
+    titulo = "Grafo Bipartito de Calificaciones"
     if usuario_objetivo:
-        titulo += f" (Caminos de Recomendación para: {usuario_objetivo})"
-    ax.set_title(titulo, fontsize=16, fontweight="bold", pad=25, color="#2C3E50")
+        titulo += f" - Caminos de {usuario_objetivo}"
+    ax.set_title(titulo, fontsize=14, fontweight="bold", pad=20, color=text_color)
 
     usuarios = sorted(list(grafo.usuarios))
     items = sorted(list(grafo.items))
@@ -83,8 +87,8 @@ def dibujar_grafo_recomendador(
         ax=ax,
         edgelist=aristas_normales,
         width=1.0,
-        alpha=0.18,
-        edge_color="#7F8C8D"
+        alpha=0.15 if not modo_oscuro else 0.22,
+        edge_color="#A6ADC8" if modo_oscuro else "#7F8C8D"
     )
 
     # 2. Aristas de Caminos Destacados
@@ -95,9 +99,9 @@ def dibujar_grafo_recomendador(
             pos,
             ax=ax,
             edgelist=aristas_destacadas,
-            width=3.2,
-            alpha=0.88,
-            edge_color="#E74C3C"
+            width=3.0,
+            alpha=0.9,
+            edge_color="#F38BA8" if modo_oscuro else "#E74C3C"
         )
 
     # 3. Nodos de Usuarios Normales
@@ -107,8 +111,8 @@ def dibujar_grafo_recomendador(
         pos,
         ax=ax,
         nodelist=nodos_u_normales,
-        node_color="#3498DB",
-        node_size=800,
+        node_color="#89B4FA" if modo_oscuro else "#3498DB",
+        node_size=650,
         node_shape="o",
         label="Otros Usuarios"
     )
@@ -120,10 +124,10 @@ def dibujar_grafo_recomendador(
             pos,
             ax=ax,
             nodelist=[usuario_objetivo],
-            node_color="#8E44AD",
-            node_size=1200,
+            node_color="#CBA6F7" if modo_oscuro else "#8E44AD",
+            node_size=1000,
             node_shape="o",
-            edgecolors="#2C3E50",
+            edgecolors="#B4BEFE" if modo_oscuro else "#2C3E50",
             linewidths=2.5,
             label=f"Usuario Objetivo ({usuario_objetivo})"
         )
@@ -135,8 +139,8 @@ def dibujar_grafo_recomendador(
         pos,
         ax=ax,
         nodelist=items_normales,
-        node_color="#2ECC71",
-        node_size=800,
+        node_color="#A6E3A1" if modo_oscuro else "#2ECC71",
+        node_size=650,
         node_shape="s",
         label="Películas en Catálogo"
     )
@@ -148,40 +152,40 @@ def dibujar_grafo_recomendador(
             pos,
             ax=ax,
             nodelist=list(items_rec_set),
-            node_color="#F39C12",
-            node_size=1200,
+            node_color="#F9E2AF" if modo_oscuro else "#F39C12",
+            node_size=1000,
             node_shape="s",
-            edgecolors="#D35400",
+            edgecolors="#FAB387" if modo_oscuro else "#D35400",
             linewidths=2.5,
             label="Películas Recomendadas ★"
         )
 
-    # 5. Etiquetas de Texto ordenadas (fuera de los nodos para máxima legibilidad)
+    # 5. Etiquetas de Texto ordenadas fuera de los nodos
     for u in usuarios:
         font_weight = "bold" if u == usuario_objetivo else "normal"
-        color = "#6C3483" if u == usuario_objetivo else "#2C3E50"
+        color = ("#CBA6F7" if modo_oscuro else "#6C3483") if u == usuario_objetivo else text_color
         x, y = pos_labels_u[u]
         ax.text(
             x, y, u,
             ha="right", va="center",
-            fontsize=10, fontweight=font_weight, color=color,
-            bbox=dict(boxstyle="round,pad=0.2", facecolor="white", edgecolor="#D5D8DC", alpha=0.9)
+            fontsize=9, fontweight=font_weight, color=color,
+            bbox=dict(boxstyle="round,pad=0.2", facecolor=box_bg, edgecolor=box_edge, alpha=0.95)
         )
 
     for it in items:
         es_rec = it in items_rec_set
         font_weight = "bold" if es_rec else "normal"
-        color = "#B7950B" if es_rec else "#2C3E50"
+        color = ("#F9E2AF" if modo_oscuro else "#B7950B") if es_rec else text_color
         x, y = pos_labels_i[it]
         prefijo = "★ " if es_rec else ""
         ax.text(
             x, y, f"{prefijo}{it}",
             ha="left", va="center",
-            fontsize=10, fontweight=font_weight, color=color,
+            fontsize=9, fontweight=font_weight, color=color,
             bbox=dict(
                 boxstyle="round,pad=0.2",
-                facecolor="#FEF9E7" if es_rec else "white",
-                edgecolor="#F39C12" if es_rec else "#D5D8DC",
+                facecolor="#45475A" if (modo_oscuro and es_rec) else ("#FEF9E7" if es_rec else box_bg),
+                edgecolor=("#FAB387" if modo_oscuro else "#F39C12") if es_rec else box_edge,
                 alpha=0.95
             )
         )
@@ -198,11 +202,15 @@ def dibujar_grafo_recomendador(
             ax=ax,
             edge_labels=edge_labels,
             font_size=8,
-            font_color="#900C3F",
-            bbox=dict(boxstyle="round,pad=0.15", facecolor="#FDEDEC", edgecolor="#F5B7B1", alpha=0.95)
+            font_color="#F38BA8" if modo_oscuro else "#900C3F",
+            bbox=dict(
+                boxstyle="round,pad=0.15",
+                facecolor="#313244" if modo_oscuro else "#FDEDEC",
+                edgecolor="#F38BA8" if modo_oscuro else "#F5B7B1",
+                alpha=0.95
+            )
         )
 
-    # Ajustar límites de los ejes para dar margen al texto exterior
     ax.set_xlim(-0.55, 2.3)
     ax.set_ylim(-0.1, 1.1)
     ax.axis("off")
@@ -212,15 +220,35 @@ def dibujar_grafo_recomendador(
         bbox_to_anchor=(0.5, -0.02),
         ncol=4,
         frameon=True,
-        facecolor="white",
-        edgecolor="#D5D8DC",
-        fontsize=9
+        facecolor=box_bg,
+        edgecolor=box_edge,
+        labelcolor=text_color,
+        fontsize=8
     )
 
     plt.tight_layout()
+    return fig
+
+
+def dibujar_grafo_recomendador(
+    grafo: GrafoBipartitoRecomendador,
+    usuario_objetivo: Optional[str] = None,
+    recomendaciones: Optional[List[dict]] = None,
+    ruta_salida: str = "grafo_recomendaciones.png",
+    mostrar_interactivo: bool = False
+) -> str:
+    """Exporta el grafo a una imagen PNG y opcionalmente lo muestra."""
+    fig = crear_figura_grafo(
+        grafo=grafo,
+        usuario_objetivo=usuario_objetivo,
+        recomendaciones=recomendaciones,
+        figsize=(15, 9),
+        dpi=200,
+        modo_oscuro=False
+    )
 
     ruta_absoluta = os.path.abspath(ruta_salida)
-    plt.savefig(ruta_absoluta, bbox_inches="tight", facecolor=fig.get_facecolor())
+    fig.savefig(ruta_absoluta, bbox_inches="tight", facecolor=fig.get_facecolor())
     
     if mostrar_interactivo:
         try:

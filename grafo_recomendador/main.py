@@ -157,6 +157,12 @@ def ejecutar_demostracion_guiada(grafo):
 def menu():
     grafo = cargar_datos_demo()
 
+    # Si se pasa argumento --gui desde consola, se abre la interfaz gráfica
+    if len(sys.argv) > 1 and sys.argv[1] == "--gui":
+        import subprocess
+        subprocess.run([sys.executable, os.path.join(os.path.dirname(__file__), "app_gui.py")])
+        return
+
     # Si se pasa argumento --demo desde consola, se ejecuta la demo directamente
     if len(sys.argv) > 1 and sys.argv[1] == "--demo":
         ejecutar_demostracion_guiada(grafo)
@@ -170,9 +176,10 @@ def menu():
         print("4. Agregar usuario o nueva calificación (nueva arista)")
         print("5. Exportar imagen del grafo completo (PNG)")
         print("6. Ejecutar Demostración Didáctica Guiada")
+        print("7. 🖥️ Abrir Interfaz Gráfica de Escritorio (UI)")
         print("0. Salir")
         
-        opcion = input("\nSelecciona una opción [0-6]: ").strip()
+        opcion = input("\nSelecciona una opción [0-7]: ").strip()
 
         if opcion == "1":
             mostrar_resumen_grafo(grafo)
@@ -186,6 +193,10 @@ def menu():
             exportar_grafico_general(grafo)
         elif opcion == "6":
             ejecutar_demostracion_guiada(grafo)
+        elif opcion == "7":
+            import subprocess
+            print("\nIniciando interfaz gráfica...")
+            subprocess.run([sys.executable, os.path.join(os.path.dirname(__file__), "app_gui.py")])
         elif opcion == "0":
             print("\n¡Gracias por usar el Recomendador de Grafos Bipartitos! Hasta pronto.")
             break

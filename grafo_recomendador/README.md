@@ -33,11 +33,12 @@ $$\hat{r}_{u, i} = \frac{\sum_{v \in \text{Vecinos}(i)} \text{sim}(u, v) \cdot r
 
 ```
 grafo_recomendador/
+├── app_gui.py        # 🖥️ Interfaz Gráfica de Escritorio (CustomTkinter + Matplotlib)
 ├── graph.py          # Clase GrafoBipartitoRecomendador y algoritmos desde cero
 ├── visualizer.py     # Renderizado visual estético con NetworkX y Matplotlib
 ├── data.py           # Catálogo inicial de películas y perfiles de usuarios
 ├── main.py           # Menú interactivo en consola y modo demostración
-├── requirements.txt  # Dependencias (networkx, matplotlib)
+├── requirements.txt  # Dependencias (networkx, matplotlib, customtkinter)
 └── README.md         # Documentación teórica y técnica
 ```
 
@@ -50,20 +51,25 @@ grafo_recomendador/
 pip install -r requirements.txt
 ```
 
-### 2. Ejecutar la demostración guiada automática
+### 2. 🖥️ Abrir la Interfaz Gráfica de Escritorio (UI)
+```bash
+python app_gui.py
+```
+*(O también mediante `python main.py --gui`)*
+
+**Características de la UI:**
+* 🎯 **Selector de usuario objetivo** para explorar recomendaciones en tiempo real.
+* 📊 **Canvas interactivo** con el grafo bipartito renderizado al instante.
+* 🌓 **Modo Oscuro / Modo Claro** con paleta de colores adaptativa.
+* ➕ **Modal para registrar calificaciones** o nuevos usuarios/películas.
+* 💾 **Exportador de imágenes PNG** con un solo clic.
+
+### 3. Ejecutar la demostración en consola
 ```bash
 python main.py --demo
 ```
-Esto ejecutará el análisis del usuario `Fernando`, mostrará los caminos del grafo y generará el archivo `demo_fernando_recomendaciones.png`.
 
-### 3. Ejecutar el menú interactivo
+### 4. Ejecutar el menú interactivo en terminal
 ```bash
 python main.py
 ```
-
-Opciones disponibles en el menú:
-1. **Ver catálogo y métricas del grafo:** Densidad de la red, número de usuarios, películas y conexiones.
-2. **Ver historial de un usuario:** Lista de películas vistas y sus estrellas.
-3. **Pedir recomendaciones:** Genera el ranking de sugerencias personalizadas y calcula caminos explicativos de longitud 3.
-4. **Agregar usuario o calificación:** Añade nuevos nodos o aristas al vuelo.
-5. **Exportar imagen del grafo:** Genera el diagrama visual en PNG.
